@@ -13,7 +13,7 @@ public class WebScraper {
 
     public static void main(String[] args) {
         ArrayList<String> linkList = new ArrayList();
-        ArrayList<String> wordList = new ArrayList();
+        HashMap<String,Integer> words = new HashMap();
         boolean verbosityFlag = false;
         boolean findWords = false;
         boolean findSentences = false;
@@ -48,9 +48,11 @@ public class WebScraper {
         }
 
         if (args[1].contains(",")) {
-            wordList.addAll(Arrays.asList(args[1].split(",")));
+            for(String word : args[1].split(",")){
+                words.put(word, 0);
+            }
         } else {
-            wordList.add(args[1]);
+            words.put(args[1], 0);
         }
 
         for (int i = 2; i < args.length; i++) {
@@ -95,8 +97,9 @@ public class WebScraper {
             if (countCharacters) {
                 System.out.println("Page № " + linkCount + " contains " + content.length() + " charaters.");
             }
-            for (String word : wordList) {
+            for (String word : words.keySet()) {
                 int numberOfOccurrences = countOccurrences(content, word);
+                words.put(word, words.get(word) + numberOfOccurrences);
                 boolean wordIsFound = (numberOfOccurrences > 0);
                 if (findWords) {
                     if (!wordIsFound) {
@@ -122,6 +125,12 @@ public class WebScraper {
                 System.out.println("Time spent on processing: " + processingTime + "ms.");
             }
             System.out.println("__________________________________________________________________________");
+        }
+        if (findWords) {
+            for (String word : words.keySet()){
+                 System.out.println("Overall number of occurrences of the word " + word + " equals " + words.get(word) + ".");
+            }
+           
         }
         if (verbosityFlag) {
             System.out.println("Overall scraping time: " + overallScrapingTime + "ms. \n"
